@@ -178,77 +178,9 @@ bsdcat_src_files := cat/cmdline.c \
 					cat/bsdcat.c
 
 
-ifeq ($(HOST_OS),darwin)
-$(warning Host : $(HOST_OS) Not Supported. Host Build Will Be Skipped )
-else
-libarchive_host_config := contrib/android/config/$(HOST_OS)_host.h
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := libarchive
-LOCAL_MODULE_TAGS := optional
-LOCAL_SRC_FILES := $(libarchive_src_files) $(libarchive_host_src_files)
-LOCAL_CFLAGS := -DPLATFORM_CONFIG_H=\"$(libarchive_host_config)\"
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/contrib/android/include
-LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/libarchive
-include $(BUILD_HOST_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := libarchive
-LOCAL_MODULE_TAGS := optional
-LOCAL_CFLAGS := -DPLATFORM_CONFIG_H=\"$(libarchive_host_config)\"
-LOCAL_SHARED_LIBRARIES := libz-host
-LOCAL_WHOLE_STATIC_LIBRARIES := libarchive
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/contrib/android/include
-LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/libarchive
-include $(BUILD_HOST_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := libarchive_fe
-LOCAL_MODULE_TAGS := optional
-LOCAL_CFLAGS := -DPLATFORM_CONFIG_H=\"$(libarchive_host_config)\"
-LOCAL_SRC_FILES := $(libarchive_fe_src_files)
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/contrib/android/include
-LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/libarchive_fe
-include $(BUILD_HOST_STATIC_LIBRARY)
-
-endif
-
-
 # Do not build target binaries if we are not targeting linux
 # on the host
 ifeq ($(HOST_OS),linux)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := bsdtar
-LOCAL_MODULE_TAGS := optional
-LOCAL_CFLAGS :=  -DBSDTAR_VERSION_STRING=ARCHIVE_VERSION_ONLY_STRING -DPLATFORM_CONFIG_H=\"$(libarchive_host_config)\"
-LOCAL_SHARED_LIBRARIES := libz-host
-LOCAL_STATIC_LIBRARIES := libarchive libarchive_fe
-LOCAL_SRC_FILES := $(bsdtar_src_files)
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/contrib/android/include
-include $(BUILD_HOST_EXECUTABLE)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := bsdcpio
-LOCAL_MODULE_TAGS := optional
-LOCAL_CFLAGS :=  -DBSDCPIO_VERSION_STRING=ARCHIVE_VERSION_ONLY_STRING -DPLATFORM_CONFIG_H=\"$(libarchive_host_config)\"
-LOCAL_SHARED_LIBRARIES := libz-host
-LOCAL_STATIC_LIBRARIES := libarchive libarchive_fe
-LOCAL_SRC_FILES := $(bsdcpio_src_files)
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/contrib/android/include
-include $(BUILD_HOST_EXECUTABLE)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := bsdcat
-LOCAL_MODULE_TAGS := optional
-LOCAL_CFLAGS := -DBSDCAT_VERSION_STRING=ARCHIVE_VERSION_ONLY_STRING -DPLATFORM_CONFIG_H=\"$(libarchive_host_config)\"
-LOCAL_SHARED_LIBRARIES := libz-host
-LOCAL_STATIC_LIBRARIES := libarchive libarchive_fe
-LOCAL_SRC_FILES := $(bsdcat_src_files)
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/contrib/android/include
-include $(BUILD_HOST_EXECUTABLE)
-
-
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libarchive
