@@ -244,6 +244,27 @@ LOCAL_SRC_FILES := $(bsdcat_src_files)
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/libarchive $(LOCAL_PATH)/libarchive_fe $(LOCAL_PATH)/contrib/android/include
 include $(BUILD_EXECUTABLE)
 
+ifndef ANDROID_MAJOR
+# First check if version_defaults.mk was already loaded.
+ifndef PLATFORM_VERSION
+include build/core/version_defaults.mk
+endif
+ifeq ($(strip $(PLATFORM_VERSION)),)
+$error(*** Cannot get Android platform version)
+endif
+ANDROID_MAJOR = $(shell echo $(PLATFORM_VERSION) | cut -d . -f 1)
+endif
+
+ifeq ($(strip $(ANDROID_MAJOR)),)
+$(error *** ANDROID_MAJOR undefined)
+endif
+
+ifeq ($(shell test $(ANDROID_MAJOR) -lt 10 && echo true),true)
+RECOVERY_INSTALL_TARGET := $(TARGET_RECOVERY_ROOT_OUT)/sbin
+else
+RECOVERY_INSTALL_TARGET := $(TARGET_RECOVERY_ROOT_OUT)/system/bin
+endif
+
 include $(CLEAR_VARS)
 LOCAL_MODULE := bsdtar-recovery
 LOCAL_MODULE_TAGS := optional
@@ -253,7 +274,7 @@ LOCAL_STATIC_LIBRARIES := libarchive libarchive_fe libz
 LOCAL_SRC_FILES := $(bsdtar_src_files)
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/libarchive $(LOCAL_PATH)/libarchive_fe $(LOCAL_PATH)/contrib/android/include
 LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
-LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
+LOCAL_MODULE_PATH := $(RECOVERY_INSTALL_TARGET)
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 include $(BUILD_EXECUTABLE)
 
